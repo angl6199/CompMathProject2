@@ -45,5 +45,10 @@ public class Node {
         return data;
     }
 
+    public void deleteNode() {
+        if (parent != null) {
+            this.parent.getChildren().remove(this);
+        }
+    }
 
 }

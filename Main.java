@@ -8,7 +8,20 @@ public class Main {
   private static Hashtable<Integer, String[]> table = new Hashtable<Integer, String[]>();
 
   public static void main(String[] args) throws FileNotFoundException, IOException {
-    ReadFile("test1.txt");
+    Scanner sc = new Scanner(System.in);
+    System.out.println("Please enter the name of the file you want to work with (include '.txt')");
+    String filename = sc.nextLine();
+
+    ReadFile(filename);
+
+    System.out.println();
+    System.out.println("Please enter the string to be tested");
+    String input = sc.nextLine();
+    System.out.println("Please enter the maximum depth");
+    int maxdepth = sc.nextInt();
+    System.out.println();
+
+    BuildTree(input, maxdepth);
   }
 
   public static void ReadFile(String name) throws FileNotFoundException, IOException {
@@ -74,17 +87,87 @@ public class Main {
     Enumeration enumeration = table.elements();
     Enumeration llaves = table.keys();
     while (enumeration.hasMoreElements()) {
-      System.out.println("Llave: " + llaves.nextElement() + " Valor: " +  enumeration.nextElement());
+      System.out.println("Llave: " + llaves.nextElement() + " Valor: " + enumeration.nextElement());
 
     }
   }
 
   public static void PrintTable2() {
     for (int i = 0; i < table.size(); i++) {
-      String temp = i+1 + " " + table.get(i+1)[0] + "->" + table.get(i+1)[1];
+      String temp = i + 1 + " " + table.get(i + 1)[0] + "->" + table.get(i + 1)[1];
       System.out.println(temp);
     }
   }
 
+  public static void calculateDepth(Node temp) {
+    int counter = 0;
+    while (temp.getParent() != null) {
+      temp = temp.getParent();
+      counter++;
+    }
+    System.out.println(counter);
+  }
+
+  public static void printTree(Node node, String appender) {
+    System.out.println(appender + node.getData());
+    node.getChildren().forEach(each -> printTree(each, appender + appender));
+  }
+
+  public static void BuildTree(String input, int maxdepth) {
+    Node root = new Node(initial);
+    Queue<Node> Q = new LinkedList<>();
+    Q.add(root);
+    String uwv = "";
+    int actualdepth = 0;
+
+    //While verde
+    while (Q.peek()!=null && !input.equals(uwv) && actualdepth<=maxdepth) {
+      Node q = Q.poll();
+      int i = 0;
+      boolean done = false;
+      String varsust = GetLeft(q);
+
+      //While rojo
+      while (!done && !input.equals(uwv)) {
+        if (!MoreRules(varsust, i)) {
+          done = true;
+        } else{
+          int j = FindProduction(varsust, i);
+          String vartemp = table.get(j)[1];
+          uwv = q.getData().replaceFirst(varsust, vartemp);
+        }
+        
+      }
+    }
+  }
+
+  public static String GetLeft(Node q){
+    for (int j = 0; j < q.getData().length(); j++) {
+      for (int k = 0; k < nonterminals.length; k++) {
+        if (q.getData().charAt(j) == (nonterminals[k].charAt(0))) {
+          return nonterminals[k];
+        } 
+      }
+    }
+    return null;
+  }
+
+  public static boolean MoreRules(String varsust, int i){
+    for (int j = i+1; j <= table.size(); j++) {
+      if (table.get(j)[0].equals(varsust)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public static int FindProduction(String varsust, int i){
+    for (int j = i+1; j <= table.size(); j++) {
+      if (table.get(j)[0].equals(varsust)) {
+        return j;
+      }
+    }
+    return -1;
+  }
 
 }
