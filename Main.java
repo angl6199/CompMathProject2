@@ -99,13 +99,13 @@ public class Main {
     }
   }
 
-  public static void calculateDepth(Node temp) {
+  public static int calculateDepth(Node temp) {
     int counter = 0;
     while (temp.getParent() != null) {
       temp = temp.getParent();
       counter++;
     }
-    System.out.println(counter);
+    return counter;
   }
 
   public static void printTree(Node node, String appender) {
@@ -135,10 +135,30 @@ public class Main {
           int j = FindProduction(varsust, i);
           String vartemp = table.get(j)[1];
           uwv = q.getData().replaceFirst(varsust, vartemp);
+          Node temp = new Node(uwv);
+          q.addChild(temp);
+
+          if (EnterQueue(uwv, input)) {
+            Q.add(temp);
+          }
+
+          i = j;
+          actualdepth = calculateDepth(temp);
+          if (actualdepth>maxdepth) {
+            temp.deleteNode();
+          }
         }
-        
       }
     }
+    printTree(root, " ");
+    System.out.println();
+    if (actualdepth<=maxdepth) {
+      System.out.println("Input: " + input + " was accepted and found in level: " + (actualdepth+1) + " with depth: " + actualdepth);
+    } else{
+      System.out.println("Input: " + input + " was not accepted with the specified depth");
+    }
+    System.out.println();
+    
   }
 
   public static String GetLeft(Node q){
@@ -168,6 +188,32 @@ public class Main {
       }
     }
     return -1;
+  }
+
+  public static boolean FindinAlphabet(String uwv){
+    for (int i = 0; i < uwv.length(); i++) {
+      for (int j = 0; j < nonterminals.length; j++) {
+        if (uwv.charAt(i) == nonterminals[j].charAt(0)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  public static boolean EnterQueue(String uwv, String input){
+    for (int i = 0; i < nonterminals.length; i++) {
+      if (uwv.charAt(0) == nonterminals[i].charAt(0)) {
+        return true;
+      }
+    }
+
+    if (uwv.charAt(0) == input.charAt(0)) {
+      return true;
+    } else{
+      return false;
+    }
+
   }
 
 }
