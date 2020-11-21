@@ -2,7 +2,9 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-  // These are the variables where the data of the file will be stored
+  /**
+   * In these variables the data of the file will be stored
+   */
   private static String[] nonterminals;
   private static String[] terminals;
   private static String initial;
@@ -13,6 +15,9 @@ public class Main {
     System.out.println("Please enter the name of the file you want to work with (include '.txt')");
     String filename = sc.nextLine();
 
+    /**
+     * We call the function "ReadFile" which reads the txt file
+     */
     ReadFile(filename);
 
     System.out.println();
@@ -22,17 +27,18 @@ public class Main {
     int maxdepth = sc.nextInt();
     System.out.println();
 
-    Node root = BuildTree(input, maxdepth);
-    generateSyntax(root);
+    /**
+     * We call the function that creates and validates in the tree of the grammar
+     * the entered string
+     */
+    BuildTree(input, maxdepth);
   }
 
   /**
-   * 
-   * This method reads the data from the file line by line and saves all the
-   * components in its corresponding variables.
+   * This method reads the grammar data from the file line by line and saves all
+   * the components in its corresponding variables.
    *
    * @param name the name of the file including .txt
-   *
    */
   public static void ReadFile(String name) throws FileNotFoundException, IOException {
     // These are the objects that will allow us to read the data from the txt file
@@ -46,7 +52,7 @@ public class Main {
     while ((line = br.readLine()) != null) {
 
       if (counter == 0) {
-        // This refers to line 0 which has all the nonterminal symbols
+        // This refers to line 0 which has the non-terminal symbols separated by commas
         nonterminals = SplitWithComma(line);
         for (String string : nonterminals) {
           System.out.println(string);
@@ -54,7 +60,7 @@ public class Main {
       }
 
       if (counter == 1) {
-        // This refers to line 1 which has all the terminal symbols
+        // This refers to line 1 which has terminal symbols separated by commas
         terminals = SplitWithComma(line);
         for (String string : terminals) {
           System.out.println(string);
@@ -62,13 +68,14 @@ public class Main {
       }
 
       if (counter == 2) {
-        // This refers to line 2 which has the initial symbol
+        // This refers to line 2 which has the start symbol
         initial = line;
         System.out.println(initial);
       }
 
       if (counter >= 3) {
-        // This refers to lines which have the productions
+        // This refers to lines 4 and further which have all the productions of the
+        // grammar
         String[] array = SplitProductions(line);
         if (table.isEmpty()) {
           table.put(1, array);
@@ -81,20 +88,22 @@ public class Main {
       counter++;
     }
     br.close();
+    // We call the function that prints the retrieved data from the file.
     PrintTable2();
   }
 
   /**
    * 
-   * Returns an array of strings to be saved. Used for reading the file.
+   * Returns an array of strings to be saved in the grammar tree. Used for reading
+   * the file.
    * 
    * * This method separates the received line from the file into multiple strings
    * whenever it finds a comma and stores them in an array
    *
-   * @param line a string containing data from the file to be separated with
-   *             commas.
+   * @param line a string containing grammar data from the file to be separated
+   *             with commas.
    *
-   * @return the data stored in an array.
+   * @return the grammar data stored in an array.
    * 
    */
   public static String[] SplitWithComma(String line) {
@@ -102,15 +111,15 @@ public class Main {
   }
 
   /**
-   * Returns an array of strings containing the productions.
+   * Returns an array of strings containing the productions of the grammar.
    * 
-   * This method is used when reading the data from the file. It separates the
-   * received line from the file into multiple strings whenever it finds an arrow,
-   * then it stores them in an array.
+   * Ths method is used when reading the grammar data from the file. It separates
+   * the received line from the file into multiple strings whenever it finds an
+   * arrow, then it stores them in an array
    *
-   * @param line a string containing a production with the following form: S->a
+   * @param line a string containing a transition with the following form: S=>At
    * 
-   * @return production of the automata
+   * @return array of strings containing the grammar productions
    * 
    */
   public static String[] SplitProductions(String line) {
@@ -118,11 +127,19 @@ public class Main {
     return array;
   }
 
+  /*
+   * public static void PrintTable() { Enumeration enumeration = table.elements();
+   * Enumeration llaves = table.keys(); while (enumeration.hasMoreElements()) {
+   * System.out.println("Llave: " + llaves.nextElement() + " Valor: " +
+   * enumeration.nextElement());
+   * 
+   * } }
+   */
+
   /**
-   * This method is used after storing the data from the file. It gets the table
-   * that contains the productions and prints it. First, it prints the number of
-   * production (key of the table) and then its content in the format A->a
-   *
+   * This method is used for prining the information the information in the same
+   * format that it was retrieved from the txt file. It helps the user to see data
+   * in a friendly way.
    */
   public static void PrintTable2() {
     for (int i = 0; i < table.size(); i++) {
@@ -132,15 +149,16 @@ public class Main {
   }
 
   /**
-   * Returns an int that is the depth of the given node of the tree.
+   * This method is used to calculate the actual depth of the node that has been
+   * stored in the tree.
    * 
-   * This method is used after inserting a node in the tree. It finds the depth of
-   * the given node.
-   *
-   * @param temp a node recently inserted in the tree
+   * It uses the properties of the Node class, so it can get the parent of the
+   * node recusively until it reaches the root and it counts how many times it has
+   * found a parent Node.
    * 
-   * @return depth of the node
+   * @param temp an object Node that has been recently added to the tree
    * 
+   * @return an int with the depth of the node
    */
   public static int calculateDepth(Node temp) {
     int counter = 0;
@@ -151,33 +169,41 @@ public class Main {
     return counter;
   }
 
+  public static void printTree(Node node, String appender) {
+    System.out.println(appender + node.getData());
+    node.getChildren().forEach(each -> printTree(each, appender + appender));
+  }
+
   /**
-   * Returns a node that is the root of the tree.
+   * This method has the purpose of validate the given input with the grammar
+   * productions which are stored at the same time into a tree.
    * 
-   * This method is used after asking the user the string to find and the maximum
-   * depth. It makes a top-down parsing and stops when maximum depth is exceeded
-   * or the string given by the user is found. It prints if the string was
-   * accepted or not.
-   *
-   * @param input    string that the user wants to process
-   * @param maxdepth int that is the maximum depth wanted
+   * The method uses the Top-down syntatic analysis algorithm, which builds every
+   * possible production of the non-terminal symbols to build a son Node and saves
+   * it in the tree, repeating the process with every node in the level of the
+   * tree until the maximum depth is reached or whenever the string is found.
    * 
-   * @return root of the created tree
-   * 
+   * @param input    string to be tested within the grammar productions, given by
+   *                 the user.
+   * @param maxdepth int the maximum depth that the tree can have to find the
+   *                 input string given by the user.
    */
-  public static Node BuildTree(String input, int maxdepth) {
+  public static void BuildTree(String input, int maxdepth) {
     Node root = new Node(initial);
     Queue<Node> Q = new LinkedList<>();
     Q.add(root);
     String uwv = "";
     int actualdepth = 0;
 
+    // While verde
     while (!Q.isEmpty() && !input.equals(uwv) && actualdepth <= maxdepth) {
+
       Node q = Q.poll();
       int i = 0;
       boolean done = false;
       String varsust = GetLeft(q);
 
+      // While rojo
       while (!done && !input.equals(uwv)) {
         if (!MoreRules(varsust, i)) {
           done = true;
@@ -190,7 +216,10 @@ public class Main {
 
           if (EnterQueue(uwv, input)) {
             Q.add(temp);
+          } else {
+            System.out.println(uwv + " was not inserted");
           }
+
           i = j;
           actualdepth = calculateDepth(temp);
           if (actualdepth > maxdepth) {
@@ -199,7 +228,7 @@ public class Main {
         }
       }
     }
-
+    printTree(root, " ");
     System.out.println();
 
     if (input.equals(uwv) && actualdepth <= maxdepth) {
@@ -209,24 +238,19 @@ public class Main {
       System.out.println("Input: " + input + " was not accepted.");
     }
     System.out.println();
-
-    return root;
+    generateSyntax(root);
 
   }
 
   /**
-   * Returns a string with the leftmost nonterminal character.
+   * This method retrieves the string stored in the node, produced with the grammar of the tree
+   * and gets the first non-terminal symbol to use it in the top-down algorithm.
    * 
-   * This method is used to find the head of the production of a given string. It
-   * compares each character of the string with each of the nonterminal symbols
-   * until it finds the first one. Null will be returned if nonterminal symbols
-   * are not found.
-   *
-   * @param q node that contains a string.
+   * To ensure that it gets a valid symbol, the string is compared with the array
+   * that contains all the non-terminal symbols from the txt file.
    * 
-   * 
-   * @return leftmost nonterminal character.
-   * 
+   * @param q a node object that has been produced from the tree grammar
+   * @return a string containing a non-terminal symbol if possible, else null
    */
   public static String GetLeft(Node q) {
     for (int j = 0; j < q.getData().length(); j++) {
@@ -239,18 +263,6 @@ public class Main {
     return null;
   }
 
-  /**
-   * Returns a boolean stating if there are more rules with head varsust.
-   * 
-   * This method is used inside the buildTree method to determine whether there
-   * are more rules with the given head.
-   *
-   * @param varsust string corresponds to the head of a production
-   * @param i       int that corresponds to the last rule found
-   * 
-   * @return boolean that states whether another rule was found o not
-   * 
-   */
   public static boolean MoreRules(String varsust, int i) {
     for (int j = i + 1; j <= table.size(); j++) {
       if (table.get(j)[0].equals(varsust)) {
@@ -260,19 +272,6 @@ public class Main {
     return false;
   }
 
-  /**
-   * Returns an int that corresponds to the number of the production with head
-   * varsust.
-   * 
-   * This method is used inside the buildTree method to determine the number of
-   * production required.
-   *
-   * @param varsust string corresponds to the head of a production
-   * @param i       int that corresponds to the last rule found
-   * 
-   * @return int that contains the number of the rule with head varsust
-   * 
-   */
   public static int FindProduction(String varsust, int i) {
     for (int j = i + 1; j <= table.size(); j++) {
       if (table.get(j)[0].equals(varsust)) {
@@ -282,27 +281,25 @@ public class Main {
     return -1;
   }
 
-  /**
-   * Returns a boolean that corresponds whether a node should be added to the
-   * queue.
-   * 
-   * This method is used inside the buildTree method to determine if the given
-   * string fulfills the characteristics to be inserted in the queue. If uwv does
-   * not belong to Σ* and the terminal prefix matches a prefix in the input.
-   * 
-   *
-   * @param uwv   string corresponds to the head of a production
-   * @param input int that corresponds to the last rule found
-   * 
-   * @return int that contains the number of the rule with head varsust
-   * 
-   */
+  public static boolean FindinAlphabet(String uwv) {
+    for (int i = 0; i < uwv.length(); i++) {
+      for (int j = 0; j < nonterminals.length; j++) {
+        if (uwv.charAt(i) == nonterminals[j].charAt(0)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   public static boolean EnterQueue(String uwv, String input) {
+
     for (int i = 0; i < nonterminals.length; i++) {
       if (uwv.charAt(0) == nonterminals[i].charAt(0)) {
         return true;
       }
     }
+
     String uwvtrimmed = "";
     int index = 0;
     boolean found = false;
@@ -312,44 +309,59 @@ public class Main {
         if (uwv.charAt(i) == nonterminals[j].charAt(0) && found == false) {
           index = i;
           found = true;
+
         }
       }
     }
+
     uwvtrimmed = uwv.substring(0, index);
 
     if (uwvtrimmed.length() > input.length()) {
       return false;
     } else {
+
       for (int i = 0; i < uwvtrimmed.length(); i++) {
         if (uwvtrimmed.charAt(i) != input.charAt(i)) {
           return false;
         }
       }
       return true;
+
     }
+
   }
 
   public static void generateSyntax(Node root) {
     String result = "";
-    Stack<Node> stack = new Stack<>();
-    stack.add(root);
+    int counter = 0;
+    Stack<Node> queue = new Stack<>();
+    queue.add(root);
 
-    while (!stack.isEmpty()) {
-      Node nodeTemp = stack.pop();
+    while (!queue.isEmpty()) {
+      Node nodeTemp = queue.pop();
       result += "[" + nodeTemp.getData();
 
+      // Si no tiene hijos su remaining es cero
       if (nodeTemp.getChildren().isEmpty()) {
         nodeTemp.setRemaining(0);
 
+        // Si no tiene papá, poner ]
         if (nodeTemp.getParent() == null) {
           result += "]";
         } else {
+          // Si tiene papá
+          // si su remaining es cero, poner ]
           if (nodeTemp.getRemaining() == 0) {
             result += "]";
+
           }
+          // ir al papá, restarle uno
+
           Node papa = nodeTemp.getParent();
           papa.setRemaining(papa.getRemaining() - 1);
 
+          // Si el papá es cero poner v1 counter++ v2 poner ], v3 subir hasta que haya
+          // padres, cada cero agrega un ]
           while (nodeTemp.getParent() != null && nodeTemp.getParent().getRemaining() == 0) {
             nodeTemp = nodeTemp.getParent();
             if (nodeTemp.getRemaining() == 0 && !nodeTemp.getDeuda()) {
@@ -357,24 +369,59 @@ public class Main {
               nodeTemp.setDeuda(true);
             }
           }
+
         }
+
       } else {
+        // si tiene hijos
         if (!nodeTemp.getChildren().isEmpty()) {
+          // Si tiene papá
           if (nodeTemp.getParent() != null) {
+            // ir al papá y restarle uno, actualizar su remaining =
+            // #hijos
+
             Node papa = nodeTemp.getParent();
             papa.setRemaining(papa.getRemaining() - 1);
             List<Node> hijos = nodeTemp.getChildren();
             nodeTemp.setRemaining(hijos.size());
-            stack.addAll(hijos);
+
+            // Si el papá se hace cero v1 counter++ v3 no va
+            if (papa.getRemaining() == 0) {
+              counter++;
+            }
+
+            // Meter hijos a la cola
+            queue.addAll(hijos);
+
           } else {
+            // Si no tiene papá, meto los hijos a la cola y le pongo su remaining = # hijos
             List<Node> hijos = nodeTemp.getChildren();
             nodeTemp.setRemaining(hijos.size());
-            stack.addAll(hijos);
+            queue.addAll(hijos);
           }
+
         }
+
       }
     }
+    // Por cada uno del counter agregar ]
+    for (int i = 0; i < counter; i++) {
+      // result += "]";
+
+    }
+
     System.out.println(result);
+
+  }
+
+  public static int countOcurrences(String s, char t) {
+    int result = 0;
+    for (int i = 0; i < s.length(); i++) {
+      if (s.charAt(i) == t) {
+        result++;
+      }
+    }
+    return result;
   }
 
 }
