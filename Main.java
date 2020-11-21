@@ -2,9 +2,7 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-  /**
-   * In these variables the data of the file will be stored
-   */
+  /* In these variables the data of the file will be store */
   private static String[] nonterminals;
   private static String[] terminals;
   private static String initial;
@@ -15,9 +13,7 @@ public class Main {
     System.out.println("Please enter the name of the file you want to work with (include '.txt')");
     String filename = sc.nextLine();
 
-    /**
-     * We call the function "ReadFile" which reads the txt file
-     */
+    /* We call the function "ReadFile" which reads the txt file */
     ReadFile(filename);
 
     System.out.println();
@@ -27,10 +23,8 @@ public class Main {
     int maxdepth = sc.nextInt();
     System.out.println();
 
-    /**
-     * We call the function that creates and validates in the tree of the grammar
-     * the entered string
-     */
+    /* We call the function that creates and validates in the tree of the grammar
+     * the entered string */
     BuildTree(input, maxdepth);
   }
 
@@ -127,15 +121,6 @@ public class Main {
     return array;
   }
 
-  /*
-   * public static void PrintTable() { Enumeration enumeration = table.elements();
-   * Enumeration llaves = table.keys(); while (enumeration.hasMoreElements()) {
-   * System.out.println("Llave: " + llaves.nextElement() + " Valor: " +
-   * enumeration.nextElement());
-   * 
-   * } }
-   */
-
   /**
    * This method is used for prining the information the information in the same
    * format that it was retrieved from the txt file. It helps the user to see data
@@ -195,7 +180,7 @@ public class Main {
     String uwv = "";
     int actualdepth = 0;
 
-    // While verde
+    // Green While
     while (!Q.isEmpty() && !input.equals(uwv) && actualdepth <= maxdepth) {
 
       Node q = Q.poll();
@@ -203,7 +188,7 @@ public class Main {
       boolean done = false;
       String varsust = GetLeft(q);
 
-      // While rojo
+      // Red while
       while (!done && !input.equals(uwv)) {
         if (!MoreRules(varsust, i)) {
           done = true;
@@ -243,8 +228,9 @@ public class Main {
   }
 
   /**
-   * This method retrieves the string stored in the node, produced with the grammar of the tree
-   * and gets the first non-terminal symbol to use it in the top-down algorithm.
+   * This method retrieves the string stored in the node, produced with the
+   * grammar of the tree and gets the first non-terminal symbol to use it in the
+   * top-down algorithm.
    * 
    * To ensure that it gets a valid symbol, the string is compared with the array
    * that contains all the non-terminal symbols from the txt file.
@@ -263,6 +249,21 @@ public class Main {
     return null;
   }
 
+  /**
+   * This method looks for any rules among the grammar that can lead to any
+   * production with the received non-terminal symbol.
+   * 
+   * To avoid repeating rules, the method receives a constantly increased variable
+   * from the top-down algorithm and uses it as a key to search the productions in
+   * the hashtable.
+   * 
+   * @param varsust a string containing the non-terminal symbol
+   * @param i       an int containing the number of the last rule found in the
+   *                table
+   * 
+   * @return a boolean indicating if there is any other rule available to create a
+   *         production.
+   */
   public static boolean MoreRules(String varsust, int i) {
     for (int j = i + 1; j <= table.size(); j++) {
       if (table.get(j)[0].equals(varsust)) {
@@ -272,6 +273,16 @@ public class Main {
     return false;
   }
 
+  /**
+   * This method assumes that there is an available rule in the grammar to create
+   * a production that has not been used. Therefor it searches in the hashtable
+   * using an increased int received as key to find the next rule of production.
+   * 
+   * @param varsust a string that contains the non-terminal symbol
+   * @param i       an int containing the last number of rule used in the grammar
+   * @return an int that contains the number of the new rule of the grammar in the
+   *         hashtable
+   */
   public static int FindProduction(String varsust, int i) {
     for (int j = i + 1; j <= table.size(); j++) {
       if (table.get(j)[0].equals(varsust)) {
@@ -281,17 +292,20 @@ public class Main {
     return -1;
   }
 
-  public static boolean FindinAlphabet(String uwv) {
-    for (int i = 0; i < uwv.length(); i++) {
-      for (int j = 0; j < nonterminals.length; j++) {
-        if (uwv.charAt(i) == nonterminals[j].charAt(0)) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
+  /**
+   * This method compares the last string produced in order to know if it can approach
+   * the input string to keep producing it or not.
+   * 
+   * To achieve the comparisson, first the method defines if the string starts with a 
+   * non terminal symbol and automatically keep producing it. If not, the algorithm 
+   * looks for any possible non terminal symbol in the string received, if it is found
+   * the string is splitted to compare if the rest of it approaches the input string and
+   * keep producing it, otherwise it stops.
+   * 
+   * @param uwv a string containing the last production made in the tree with the grammar
+   * @param input a string containing the string to be tested by the user
+   * @return  a boolean indicating if the last string produced must be produced again or not
+   */
   public static boolean EnterQueue(String uwv, String input) {
 
     for (int i = 0; i < nonterminals.length; i++) {
@@ -331,6 +345,10 @@ public class Main {
 
   }
 
+  /**
+   * 
+   * @param root
+   */
   public static void generateSyntax(Node root) {
     String result = "";
     int counter = 0;
