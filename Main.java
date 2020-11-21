@@ -141,6 +141,8 @@ public class Main {
 
           if (EnterQueue(uwv, input)) {
             Q.add(temp);
+          } else { // else prueba
+            System.out.println(uwv + " was not inserted");
           }
 
           i = j;
@@ -217,10 +219,10 @@ public class Main {
     int index = 0;
     boolean found = false;
 
-    for (int i = 0; i < nonterminals.length; i++) {
-      for (int j = 0; j < uwv.length(); j++) {
-        if (uwv.charAt(j) == nonterminals[i].charAt(0) && found == false) {
-          index = j;
+    for (int i = 0; i < uwv.length(); i++) {
+      for (int j = 0; j < nonterminals.length; j++) {
+        if (uwv.charAt(i) == nonterminals[j].charAt(0) && found == false) {
+          index = i;
           found = true;
 
         }
