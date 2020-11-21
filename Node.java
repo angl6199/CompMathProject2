@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Node {
 
     private String data = null;
@@ -9,6 +8,10 @@ public class Node {
     private List<Node> children = new ArrayList<>();
 
     private Node parent = null;
+
+    private int remaining;
+
+    public boolean deuda;
 
     public Node(String data) {
         this.data = data;
@@ -19,6 +22,10 @@ public class Node {
         this.children.add(child);
     }
 
+    public void addChildren(List<Node> children) {
+        children.forEach(each -> each.setParent(this));
+        this.children.addAll(children);
+    }
 
     public List<Node> getChildren() {
         return children;
@@ -32,7 +39,23 @@ public class Node {
         this.data = data;
     }
 
-    private void setParent(Node parent) {
+    public int getRemaining() {
+        return remaining;
+    }
+
+    public void setRemaining(int remaining) {
+        this.remaining = remaining;
+    }
+
+    public boolean getDeuda() {
+        return deuda;
+    }
+
+    public void setDeuda(boolean deuda) {
+        this.deuda = deuda;
+    }
+
+    public void setParent(Node parent) {
         this.parent = parent;
     }
 
