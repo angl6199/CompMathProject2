@@ -22,10 +22,29 @@ public class Main {
     int maxdepth = sc.nextInt();
     System.out.println();
 
-    Node root = BuildTree(input, maxdepth);
-    generateSyntax(root);
+    if (validateInput(input)) {
+      Node root = BuildTree(input, maxdepth);
+      generateSyntax(root);
+    } else {
+      System.out.println("Please check your input, it contains not valid characters");
+    }
 
     sc.close();
+  }
+
+  public static boolean validateInput(String input) {
+    int counter = 0;
+    for (int i = 0; i < input.length(); i++) {
+      for (int j = 0; j < terminals.length; j++) {
+        if (input.charAt(i) == terminals[j].charAt(0)) {
+          counter++;
+        }
+      }
+    }
+    if (counter == input.length()) {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -111,8 +130,6 @@ public class Main {
     String[] array = line.split("->");
     return array;
   }
-
-
 
   /**
    * Returns an int that is the depth of the given node of the tree.
@@ -223,7 +240,7 @@ public class Main {
   }
 
   /**
-   * Returns a boolean stating if there are more rules with head varsust.
+   * Returns a boolean stating if there are more rules with the given head.
    * 
    * This method is used inside the buildTree method to determine whether there
    * are more rules with the given head.
@@ -231,7 +248,7 @@ public class Main {
    * @param varsust string corresponds to the head of a production
    * @param i       int that corresponds to the last rule found
    * 
-   * @return boolean that states whether another rule was found o not
+   * @return boolean that states whether another rule was found or not
    * 
    */
   public static boolean MoreRules(String varsust, int i) {
@@ -244,8 +261,8 @@ public class Main {
   }
 
   /**
-   * Returns an int that corresponds to the number of the production with head
-   * varsust.
+   * Returns an int that corresponds to the number of the production with the
+   * given head.
    * 
    * This method is used inside the buildTree method to determine the number of
    * production required.
@@ -253,7 +270,7 @@ public class Main {
    * @param varsust string corresponds to the head of a production
    * @param i       int that corresponds to the last rule found
    * 
-   * @return int that contains the number of the rule with head varsust
+   * @return int that contains the number of the rule with the given head
    * 
    */
   public static int FindProduction(String varsust, int i) {
@@ -371,8 +388,5 @@ public class Main {
     System.out.println(result);
     System.out.println();
   }
-
-
-
 
 }
